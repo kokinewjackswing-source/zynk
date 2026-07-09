@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<!-- Swap the accent: change data-accent to electric-green | electric-blue | warm-orange -->
+<html lang="en" data-accent="electric-green">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Portfolio</title>
+  <meta name="description" content="" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <!-- ===== Header ===== -->
+  <header class="site-header">
+    <div class="container nav">
+      <a class="brand" href="index.html" id="brand">Brand</a>
+      <nav class="nav-links" id="nav-links" aria-label="Primary"></nav>
+      <button class="nav-toggle" id="nav-toggle" aria-label="Toggle menu">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <main>
+    <!-- ===== 1. Hero ===== -->
+    <section class="hero container" id="top">
+      <div class="hero-grid">
+        <div class="hero-copy reveal">
+          <div class="hero-since" id="hero-since"></div>
+          <h1 id="hero-title"></h1>
+          <div class="hero-role" id="hero-role"></div>
+          <p class="hero-intro" id="hero-intro"></p>
+          <div class="hero-actions" id="hero-actions"></div>
+        </div>
+        <div class="hero-visual reveal">
+          <img class="hero-photo" id="hero-photo" src="" alt="" />
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== 2. About ===== -->
+    <section class="section section--soft" id="about">
+      <div class="container about-grid">
+        <div class="reveal">
+          <span class="kicker" id="about-kicker"></span>
+          <h2 class="about-tagline" id="about-tagline"></h2>
+        </div>
+        <div class="about-body reveal" id="about-body"></div>
+      </div>
+    </section>
+
+    <!-- ===== 3. Services ===== -->
+    <section class="section" id="services">
+      <div class="container">
+        <div class="reveal">
+          <span class="kicker" id="services-kicker"></span>
+          <h2 class="section-title" id="services-heading"></h2>
+        </div>
+        <div class="services-grid reveal" id="services-grid"></div>
+      </div>
+    </section>
+
+    <!-- ===== 4. Featured Projects ===== -->
+    <section class="section section--soft" id="work">
+      <div class="container">
+        <div class="work-head reveal">
+          <div>
+            <span class="kicker">Featured Work</span>
+            <h2 class="section-title">Selected projects</h2>
+          </div>
+        </div>
+        <div class="work-grid" id="work-grid"></div>
+      </div>
+    </section>
+
+    <!-- ===== 5. Testimonials ===== -->
+    <section class="section" id="testimonials">
+      <div class="container">
+        <div class="reveal">
+          <span class="kicker" id="testimonials-kicker"></span>
+          <h2 class="section-title" id="testimonials-heading"></h2>
+        </div>
+        <div class="testimonials-grid reveal" id="testimonials-grid"></div>
+      </div>
+    </section>
+
+    <!-- ===== 6. Thoughts (blog) ===== -->
+    <section class="section section--soft" id="thoughts">
+      <div class="container">
+        <div class="reveal">
+          <span class="kicker">Thoughts</span>
+          <h2 class="section-title">Writing &amp; reflections</h2>
+        </div>
+        <div class="thoughts-grid" id="thoughts-grid"></div>
+      </div>
+    </section>
+
+    <!-- ===== 7. Contact ===== -->
+    <section class="section" id="contact">
+      <div class="container contact-grid">
+        <div class="reveal">
+          <span class="kicker" id="contact-kicker"></span>
+          <h2 class="section-title" id="contact-heading"></h2>
+          <p class="section-lead" id="contact-blurb"></p>
+          <a class="contact-email" id="contact-email" href="#"></a>
+        </div>
+        <form class="form reveal" id="contact-form" method="POST">
+          <div class="field">
+            <label for="name">Name</label>
+            <input type="text" id="name" name="name" placeholder="Your name" required />
+          </div>
+          <div class="field">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" placeholder="you@email.com" required />
+          </div>
+          <div class="field">
+            <label for="details">Project details</label>
+            <textarea id="details" name="details" placeholder="Tell me about your project…" required></textarea>
+          </div>
+          <button type="submit" class="btn btn--primary">Send message</button>
+          <p class="form-note">No backend wired up yet — see <code>data.js → contact.formAction</code>. Until then this opens your email app.</p>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <!-- ===== Footer ===== -->
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <a class="brand" id="footer-brand" href="index.html">Brand</a>
+      <nav class="footer-social" id="footer-social" aria-label="Social"></nav>
+      <p class="footer-copy">© <span id="footer-year"></span> · Built with care.</p>
+    </div>
+  </footer>
+
+  <script src="js/data.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

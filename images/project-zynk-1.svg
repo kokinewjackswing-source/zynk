@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 760" role="img" aria-label="Zynk visual placeholder">
+  <rect width="1200" height="760" fill="#141414"/>
+  <rect x="80" y="80" width="480" height="600" rx="20" fill="#1e1e1e"/>
+  <rect x="620" y="80" width="500" height="280" rx="20" fill="#1e1e1e"/>
+  <rect x="620" y="400" width="500" height="280" rx="20" fill="#1e1e1e"/>
+  <text x="600" y="730" fill="#5a5a5a" font-family="Space Grotesk, Arial, sans-serif" font-size="26" text-anchor="middle">project-zynk-1.png</text>
+</svg>

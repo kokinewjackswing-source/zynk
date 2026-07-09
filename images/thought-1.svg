@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675" role="img" aria-label="Blog thumbnail placeholder">
+  <rect width="1200" height="675" fill="#141414"/>
+  <rect x="100" y="120" width="640" height="40" rx="10" fill="#222"/>
+  <rect x="100" y="200" width="500" height="40" rx="10" fill="#222"/>
+  <rect x="100" y="300" width="1000" height="20" rx="8" fill="#1c1c1c"/>
+  <rect x="100" y="350" width="900" height="20" rx="8" fill="#1c1c1c"/>
+  <rect x="100" y="400" width="950" height="20" rx="8" fill="#1c1c1c"/>
+  <text x="600" y="600" fill="#5a5a5a" font-family="Space Grotesk, Arial, sans-serif" font-size="26" text-anchor="middle">thought-1.png</text>
+</svg>

@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" role="img" aria-label="Project Two cover placeholder">
+  <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#101a2c"/><stop offset="1" stop-color="#0a0a0a"/></linearGradient></defs>
+  <rect width="1200" height="800" fill="url(#g)"/>
+  <circle cx="950" cy="620" r="240" fill="#2E7BFF" opacity="0.16"/>
+  <text x="80" y="520" fill="#f4f4f4" font-family="Space Grotesk, Arial, sans-serif" font-size="96" font-weight="700">Project Two</text>
+  <text x="84" y="580" fill="#7a7a7a" font-family="Space Grotesk, Arial, sans-serif" font-size="30" font-weight="500">Mobile App · placeholder cover</text>
+</svg>

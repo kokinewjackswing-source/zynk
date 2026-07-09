@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<!-- Keep data-accent in sync with index.html -->
+<html lang="en" data-accent="electric-green">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Project</title>
+  <meta name="description" content="" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container nav">
+      <a class="brand" href="index.html" id="brand">Brand</a>
+      <nav class="nav-links" id="nav-links" aria-label="Primary"></nav>
+      <button class="nav-toggle" id="nav-toggle" aria-label="Toggle menu">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <main id="page-root"></main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <a class="brand" id="footer-brand" href="index.html">Brand</a>
+      <nav class="footer-social" id="footer-social" aria-label="Social"></nav>
+      <p class="footer-copy">© <span id="footer-year"></span> · Built with care.</p>
+    </div>
+  </footer>
+
+  <script>window.PAGE_TYPE = "project";</script>
+  <script src="js/data.js"></script>
+  <script src="js/inner.js"></script>
+</body>
+</html>

@@ -1,0 +1,719 @@
+/* =====================================================================
+   ZYNK APP — Home & Library screens
+   Follows DESIGN.md strictly:
+     · Flat orange #FF6A00 / cream #F4EFE6 / black #141414 only
+     · Bricolage Grotesque (display) + Inter (body/UI)
+     · 16px spacing base, 14px corner radius
+     · Hand-built inline SVG icons (in app.js)
+     · No gradients, no photos, no icon fonts
+   ===================================================================== */
+
+/* ---- Tokens -------------------------------------------------------- */
+:root {
+  --zk-orange:  #FF6A00;
+  --zk-cream:   #F4EFE6;
+  --zk-black:   #141414;
+  --zk-page-bg: #0E0E0E;
+  --zk-muted:   rgba(244, 239, 230, 0.50);
+  --zk-border:  rgba(244, 239, 230, 0.12);
+  --zk-radius:  14px;
+  --zk-nav-h:   64px;
+  --zk-display: "Bricolage Grotesque", sans-serif;
+  --zk-body:    "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* ---- Reset --------------------------------------------------------- */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+body {
+  font-family: var(--zk-body);
+  background: var(--zk-page-bg);
+  -webkit-font-smoothing: antialiased;
+  overflow: hidden;
+}
+button { font-family: inherit; cursor: pointer; border: none; background: none; }
+a { color: inherit; text-decoration: none; }
+
+/* ---- App shell ----------------------------------------------------- */
+#app-wrapper {
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  /* Thin border on wide viewports so the column is legible */
+  outline: 1px solid rgba(244, 239, 230, 0.07);
+}
+
+/* Screen container — screens layer inside here */
+#app-root {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ====================================================================
+   SCREENS — all sit in the same layer, only .is-active is shown
+   ==================================================================== */
+.zk-screen {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  display: none;
+  flex-direction: column;
+  background: var(--zk-black);
+  color: var(--zk-cream);
+}
+.zk-screen.is-active { display: flex; }
+
+/* ====================================================================
+   SHARED COMPONENTS
+   ==================================================================== */
+
+/* Eyebrow / section label */
+.zk-eyebrow {
+  font-family: var(--zk-body);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--zk-orange);
+}
+
+/* Primary button */
+.zk-btn--primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 24px;
+  background: var(--zk-orange);
+  color: var(--zk-black);
+  font-family: var(--zk-body);
+  font-size: 15px;
+  font-weight: 600;
+  border-radius: var(--zk-radius);
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.18s;
+}
+.zk-btn--primary:hover { opacity: 0.88; }
+
+/* ====================================================================
+   HOME SCREEN
+   ==================================================================== */
+.zk-home { background: var(--zk-black); }
+
+/* Header ------------------------------------------------------------ */
+.zk-header {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px;
+  background: var(--zk-black);
+}
+
+.zk-brand {
+  font-family: var(--zk-display);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--zk-orange);
+}
+
+.zk-header__icon {
+  color: var(--zk-cream);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--zk-radius);
+  transition: background 0.18s;
+}
+.zk-header__icon:hover { background: rgba(244, 239, 230, 0.08); }
+
+/* Scrollable home content */
+.zk-home__scroll {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Hero -------------------------------------------------------------- */
+.zk-hero {
+  padding: 32px 24px 48px;
+  background: var(--zk-black);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Oversized display heading — each <span> is one line */
+.zk-hero__heading {
+  display: flex;
+  flex-direction: column;
+  font-family: var(--zk-display);
+  font-size: clamp(3rem, 13vw, 5rem);
+  font-weight: 800;
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+  color: var(--zk-cream);
+}
+
+.zk-hero__sub {
+  font-size: 15px;
+  color: var(--zk-muted);
+  margin-top: 8px;
+}
+
+/* Featured lesson — orange color switchback */
+.zk-featured-section { padding: 0 24px 32px; }
+
+.zk-featured-card {
+  background: var(--zk-orange);
+  border-radius: var(--zk-radius);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  color: var(--zk-black);
+}
+
+.zk-featured-card__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.zk-featured-card__top .zk-eyebrow { color: rgba(20, 20, 20, 0.6); }
+
+.zk-featured-card__arrow {
+  font-size: 18px;
+  color: var(--zk-black);
+  opacity: 0.6;
+}
+
+/* Lesson title — Bricolage Grotesque, large, poster feel */
+.zk-featured-card__title {
+  font-family: var(--zk-display);
+  font-size: clamp(1.6rem, 7vw, 2.4rem);
+  font-weight: 800;
+  line-height: 0.97;
+  letter-spacing: -0.01em;
+  color: var(--zk-black);
+}
+
+.zk-featured-card__meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.zk-featured-card__genre,
+.zk-featured-card__dur {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(20, 20, 20, 0.65);
+}
+
+.zk-meta-dot { color: rgba(20, 20, 20, 0.4); }
+
+/* Category rail ----------------------------------------------------- */
+.zk-cat-section { padding-bottom: 40px; }
+
+.zk-section-label {
+  padding: 0 24px 16px;
+  font-family: var(--zk-body);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--zk-muted);
+}
+
+.zk-cat-rail {
+  display: flex;
+  gap: 12px;
+  padding: 0 24px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  /* hide scrollbar */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.zk-cat-rail::-webkit-scrollbar { display: none; }
+
+/* Category card — color themes via data-theme */
+.zk-cat-card {
+  flex-shrink: 0;
+  width: 156px;
+  min-height: 196px;
+  border-radius: var(--zk-radius);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  scroll-snap-align: start;
+  text-align: left;
+  cursor: pointer;
+  background: var(--cc-bg);
+  color: var(--cc-text);
+  transition: opacity 0.18s;
+}
+.zk-cat-card:hover { opacity: 0.88; }
+
+/* Color themes */
+.zk-cat-card[data-theme="dark"] {
+  --cc-bg:    var(--zk-black);
+  --cc-text:  var(--zk-cream);
+  --cc-num:   var(--zk-orange);
+  --cc-badge: var(--zk-orange);
+  border: 1px solid rgba(244, 239, 230, 0.12);
+}
+.zk-cat-card[data-theme="cream"] {
+  --cc-bg:    var(--zk-cream);
+  --cc-text:  var(--zk-black);
+  --cc-num:   var(--zk-orange);
+  --cc-badge: var(--zk-orange);
+}
+.zk-cat-card[data-theme="orange"] {
+  --cc-bg:    var(--zk-orange);
+  --cc-text:  var(--zk-black);
+  --cc-num:   rgba(20, 20, 20, 0.55);
+  --cc-badge: rgba(20, 20, 20, 0.45);
+}
+
+/* /01 step number label */
+.zk-cat-card__num {
+  font-family: var(--zk-display);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--cc-num);
+}
+
+/* × badge — decorative, top right */
+.zk-cat-card__badge {
+  position: absolute;  /* relative to card */
+  /* Use flex order to position at top-right instead of absolute */
+}
+
+/* Category cards use a 3-row flex: num / spacer / label */
+.zk-cat-card__top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.zk-cat-card__badge-x {
+  font-family: var(--zk-display);
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--cc-badge);
+  line-height: 1;
+  user-select: none;
+}
+
+/* Category name — large Bricolage, bottom of card */
+.zk-cat-card__label {
+  font-family: var(--zk-display);
+  font-size: clamp(1.05rem, 4vw, 1.25rem);
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+  white-space: pre-line; /* allows \n line breaks */
+  color: var(--cc-text);
+}
+
+/* ====================================================================
+   LIBRARY SCREEN
+   ==================================================================== */
+.zk-library {
+  background: var(--zk-black);
+  /* display/flex-direction inherited from .zk-screen and .zk-screen.is-active */
+}
+
+/* Large heading — static (doesn't scroll away) */
+.zk-lib-head {
+  flex-shrink: 0;
+  padding: 32px 24px 24px;
+}
+
+.zk-lib-heading {
+  display: flex;
+  flex-direction: column;
+  font-family: var(--zk-display);
+  font-size: clamp(2rem, 9vw, 3rem);
+  font-weight: 800;
+  line-height: 1.0;
+  letter-spacing: -0.02em;
+  color: var(--zk-cream);
+}
+
+/* Filter rail — static, horizontally scrollable */
+.zk-filter-rail {
+  flex-shrink: 0;
+  display: flex;
+  gap: 8px;
+  padding: 0 24px 20px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.zk-filter-rail::-webkit-scrollbar { display: none; }
+
+.zk-filter {
+  flex-shrink: 0;
+  padding: 8px 16px;
+  border-radius: 14px;
+  border: 1px solid var(--zk-border);
+  background: transparent;
+  color: var(--zk-muted);
+  font-family: var(--zk-body);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  scroll-snap-align: start;
+  transition: border-color 0.18s, background 0.18s, color 0.18s;
+}
+.zk-filter:hover { border-color: rgba(255, 106, 0, 0.4); color: var(--zk-cream); }
+.zk-filter.is-active {
+  background: var(--zk-orange);
+  border-color: var(--zk-orange);
+  color: var(--zk-black);
+}
+
+/* Lesson list — scrollable */
+.zk-lessons {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 0 24px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Lesson card */
+.zk-lesson-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px;
+  background: rgba(244, 239, 230, 0.04);
+  border: 1px solid var(--zk-border);
+  border-radius: var(--zk-radius);
+  color: var(--zk-cream);
+  transition: border-color 0.18s;
+}
+.zk-lesson-card:hover { border-color: rgba(255, 106, 0, 0.35); }
+
+.zk-lesson-card__left {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.zk-lesson-card__genre {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  color: var(--zk-orange);
+}
+
+/* Lesson title in Bricolage — typographic contrast against the genre label */
+.zk-lesson-card__title {
+  font-family: var(--zk-display);
+  font-size: 1.05rem;
+  font-weight: 700;
+  line-height: 1.15;
+  color: var(--zk-cream);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.zk-lesson-card__right {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.zk-lesson-card__dur {
+  font-size: 12px;
+  color: var(--zk-muted);
+  white-space: nowrap;
+}
+
+.zk-lessons__empty {
+  padding-top: 32px;
+  text-align: center;
+  font-size: 14px;
+  color: var(--zk-muted);
+}
+
+/* ====================================================================
+   STUB SCREENS (Progress / Profile)
+   ==================================================================== */
+.zk-stub {
+  background: var(--zk-black);
+  align-items: center;
+  justify-content: flex-end;
+  padding: 48px 32px 64px;
+}
+
+.zk-stub__inner { display: flex; flex-direction: column; gap: 16px; }
+
+.zk-stub__heading {
+  font-family: var(--zk-display);
+  font-size: clamp(3rem, 12vw, 5rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 0.95;
+  color: var(--zk-cream);
+}
+
+.zk-stub__body {
+  font-size: 15px;
+  color: var(--zk-muted);
+  max-width: 28ch;
+}
+
+/* ====================================================================
+   BOTTOM NAVIGATION
+   ==================================================================== */
+.zk-nav {
+  flex-shrink: 0;
+  height: var(--zk-nav-h);
+  background: var(--zk-black);
+  border-top: 1px solid var(--zk-border);
+  display: flex;
+  align-items: stretch;
+}
+
+.zk-nav__item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  color: var(--zk-muted);
+  transition: color 0.18s;
+}
+.zk-nav__item:hover { color: rgba(244, 239, 230, 0.8); }
+.zk-nav__item.is-active { color: var(--zk-orange); }
+
+.zk-nav__label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+/* ====================================================================
+   LESSON DETAIL SCREEN
+   ==================================================================== */
+
+/* Scrollable detail content */
+.zk-detail__scroll {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Header: back button + genre label */
+.zk-detail-header {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--zk-border);
+}
+
+.zk-detail-back {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--zk-cream);
+  font-family: var(--zk-body);
+  font-size: 14px;
+  font-weight: 500;
+  opacity: 0.65;
+  padding: 4px 0;
+  transition: opacity 0.18s;
+}
+.zk-detail-back:hover { opacity: 1; }
+
+.zk-detail-genre {
+  font-family: var(--zk-body);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--zk-orange);
+}
+
+/* Hero: oversized lesson title + meta row */
+.zk-detail-hero {
+  padding: 32px 24px 24px;
+}
+
+/* Poster-style title: Bricolage 800, uppercase, tight leading */
+.zk-detail-title {
+  font-family: var(--zk-display);
+  font-size: clamp(2.8rem, 12vw, 4.5rem);
+  font-weight: 800;
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+  color: var(--zk-cream);
+  white-space: pre-line; /* allows \n in displayTitle */
+  margin-bottom: 24px;
+}
+
+.zk-detail-meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.zk-detail-duration {
+  font-family: var(--zk-body);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: var(--zk-muted);
+}
+
+.zk-detail-meta__dot {
+  color: var(--zk-muted);
+  font-size: 13px;
+}
+
+/* Action area: play + secondary controls */
+.zk-detail-actions {
+  padding: 24px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+/* Large orange play button — icon fill must be black (DESIGN.md) */
+.zk-play-btn {
+  flex-shrink: 0;
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: var(--zk-orange);
+  color: var(--zk-black);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.18s, transform 0.15s;
+}
+.zk-play-btn:hover  { opacity: 0.88; }
+.zk-play-btn:active { transform: scale(0.95); }
+
+/* Secondary icon buttons (restart, timer) */
+.zk-icon-btn {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--zk-radius);
+  border: 1px solid var(--zk-border);
+  background: transparent;
+  color: var(--zk-cream);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: border-color 0.18s, background 0.18s;
+}
+.zk-icon-btn:hover {
+  border-color: rgba(255, 106, 0, 0.4);
+  background: rgba(255, 106, 0, 0.06);
+}
+
+/* Divider */
+.zk-detail-divider {
+  height: 1px;
+  background: var(--zk-border);
+  margin: 0 24px;
+}
+
+/* Description section */
+.zk-detail-desc {
+  padding: 24px 24px 0;
+}
+
+.zk-detail-desc p {
+  font-family: var(--zk-body);
+  font-size: 15px;
+  line-height: 1.65;
+  color: var(--zk-muted);
+}
+
+/* "What you'll work on" section */
+.zk-detail-focuses {
+  padding: 32px 24px 48px;
+}
+
+.zk-detail-focuses__label {
+  font-family: var(--zk-body);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--zk-muted);
+  margin-bottom: 20px;
+}
+
+/* Numbered focus item: /01 label + text side by side */
+.zk-focus-item {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--zk-border);
+}
+.zk-focus-item:first-of-type { border-top: 1px solid var(--zk-border); }
+
+.zk-focus-num {
+  flex-shrink: 0;
+  font-family: var(--zk-display);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--zk-orange);
+  min-width: 32px;
+}
+
+.zk-focus-text {
+  font-family: var(--zk-body);
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--zk-cream);
+}
+
+/* ====================================================================
+   Reduced motion
+   ==================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  .zk-btn--primary, .zk-filter, .zk-lesson-card, .zk-play-btn,
+  .zk-icon-btn, .zk-cat-card, .zk-nav__item, .zk-header__icon,
+  .zk-detail-back { transition: none; }
+}

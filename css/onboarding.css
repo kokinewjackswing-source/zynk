@@ -1,0 +1,461 @@
+/* =====================================================================
+   ZYNK ONBOARDING — Styles
+   Follows DESIGN.md strictly:
+     · Flat color only — no gradients
+     · orange #FF6A00 / cream #F4EFE6 / black #141414
+     · Bricolage Grotesque (display) + Inter (body/UI)
+     · 16px spacing base, 14px corner radius
+     · Hand-built inline SVG icons only (in onboarding.js)
+   ===================================================================== */
+
+/* ---- Tokens -------------------------------------------------------- */
+:root {
+  --ob-orange:   #FF6A00;
+  --ob-cream:    #F4EFE6;
+  --ob-black:    #141414;
+  --ob-bg-page:  #0E0E0E;
+  --ob-radius:   14px;
+  --ob-display:  "Bricolage Grotesque", sans-serif;
+  --ob-body:     "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* ---- Reset --------------------------------------------------------- */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+body {
+  font-family: var(--ob-body);
+  background: var(--ob-bg-page);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+button { font-family: inherit; cursor: pointer; border: none; background: none; }
+
+/* ---- Root wrapper -------------------------------------------------- */
+#ob-root {
+  min-height: 100dvh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+/* ---- Color themes (set via data-theme on each screen) -------------- */
+.ob-screen[data-theme="dark"] {
+  --ob-bg:             var(--ob-black);
+  --ob-text:           var(--ob-cream);
+  --ob-muted:          rgba(244, 239, 230, 0.50);
+  --ob-border:         rgba(244, 239, 230, 0.13);
+  --ob-card-bg:        rgba(244, 239, 230, 0.03);
+  --ob-card-selected:  rgba(255, 106,   0, 0.10);
+}
+
+.ob-screen[data-theme="light"] {
+  --ob-bg:             var(--ob-cream);
+  --ob-text:           var(--ob-black);
+  --ob-muted:          rgba( 20,  20,  20, 0.50);
+  --ob-border:         rgba( 20,  20,  20, 0.13);
+  --ob-card-bg:        rgba( 20,  20,  20, 0.03);
+  --ob-card-selected:  rgba(255, 106,   0, 0.12);
+}
+
+.ob-screen[data-theme="orange"] {
+  --ob-bg:             var(--ob-orange);
+  --ob-text:           var(--ob-black);
+  --ob-muted:          rgba( 20,  20,  20, 0.55);
+  --ob-border:         rgba( 20,  20,  20, 0.18);
+}
+
+/* ---- All screens --------------------------------------------------- */
+.ob-screen {
+  display: none;
+  flex-direction: column;
+  width: 100%;
+  max-width: 480px;
+  min-height: 100dvh;
+  background: var(--ob-bg);
+  color: var(--ob-text);
+  position: relative;
+  overflow: hidden;
+}
+
+.ob-screen.is-active { display: flex; }
+
+/* Subtle side border on wide viewports */
+@media (min-width: 500px) {
+  .ob-screen {
+    outline: 1px solid rgba(244, 239, 230, 0.07);
+  }
+}
+
+/* ====================================================================
+   WELCOME SCREEN
+   ==================================================================== */
+.ob-welcome {
+  padding: 48px 32px 40px;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 40px;
+  min-height: 100dvh;
+}
+
+/* Oversized × mark bleeds off top-right edge — poster energy */
+.ob-welcome__deco {
+  position: absolute;
+  top: -24px;
+  right: -12px;
+  font-family: var(--ob-display);
+  font-size: clamp(9rem, 38vw, 14rem);
+  font-weight: 800;
+  line-height: 1;
+  color: var(--ob-orange);
+  user-select: none;
+  pointer-events: none;
+  letter-spacing: -0.04em;
+}
+
+.ob-welcome__inner {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.ob-welcome__eyebrow {
+  font-family: var(--ob-body);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ob-orange);
+}
+
+/* Heading lines in Bricolage Grotesque — each line in its own span */
+.ob-welcome__heading {
+  display: flex;
+  flex-direction: column;
+  font-family: var(--ob-display);
+  font-size: clamp(2.6rem, 11vw, 4.2rem);
+  font-weight: 800;
+  line-height: 0.97;
+  letter-spacing: -0.02em;
+  color: var(--ob-text);
+}
+
+.ob-welcome__body {
+  font-size: 1rem;
+  line-height: 1.65;
+  color: var(--ob-muted);
+  max-width: 30ch;
+}
+
+.ob-welcome__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+/* ====================================================================
+   STEP SCREENS (shared)
+   ==================================================================== */
+.ob-step {
+  height: 100dvh;
+  overflow: hidden;
+  flex-direction: column;
+}
+
+/* Top chrome: back button / progress pips / step number */
+.ob-top {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--ob-border);
+  gap: 16px;
+}
+
+.ob-back {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--ob-text);
+  font-size: 13px;
+  font-weight: 500;
+  opacity: 0.65;
+  padding: 4px 0;
+  transition: opacity 0.18s;
+}
+.ob-back:hover { opacity: 1; }
+.ob-back svg { flex-shrink: 0; }
+
+/* Three horizontal progress pips */
+.ob-progress {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+}
+
+.ob-progress__pip {
+  display: block;
+  width: 28px;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--ob-border);
+}
+
+.ob-progress__pip--done   { background: var(--ob-orange); }
+.ob-progress__pip--active { background: var(--ob-orange); opacity: 0.45; }
+
+/* /01 label — Bricolage, orange, small */
+.ob-step-num {
+  font-family: var(--ob-display);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--ob-orange);
+  white-space: nowrap;
+}
+
+/* Scrollable body between chrome bars */
+.ob-step__body {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 32px 24px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Question heading — two <span> lines stack */
+.ob-step__heading {
+  display: flex;
+  flex-direction: column;
+  font-family: var(--ob-display);
+  font-size: clamp(2rem, 9vw, 3rem);
+  font-weight: 800;
+  line-height: 1.0;
+  letter-spacing: -0.02em;
+  color: var(--ob-text);
+  margin-bottom: 8px;
+}
+
+.ob-step__sub {
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--ob-muted);
+  margin-bottom: 16px;
+}
+
+/* Bottom chrome: skip link / next button */
+.ob-bottom {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 24px;
+  border-top: 1px solid var(--ob-border);
+  gap: 16px;
+}
+
+/* ====================================================================
+   OPTION CARDS — single-select
+   ==================================================================== */
+.ob-options--single {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.ob-option {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  border-radius: var(--ob-radius);
+  border: 1px solid var(--ob-border);
+  background: var(--ob-card-bg);
+  color: var(--ob-text);
+  text-align: left;
+  width: 100%;
+  transition: border-color 0.18s, background 0.18s;
+}
+
+.ob-option:hover      { border-color: rgba(255, 106, 0, 0.45); }
+.ob-option.is-selected {
+  border-color: var(--ob-orange);
+  background: var(--ob-card-selected);
+}
+
+/* /02 light theme: sharp flat black outline, DESIGN.md style */
+.ob-screen[data-theme="light"] .ob-option {
+  background: #F4EFE6;
+  border: 1.5px solid #141414;
+  box-shadow: none;
+}
+
+/* Restore orange border + tint on selection (higher specificity needed) */
+.ob-screen[data-theme="light"] .ob-option.is-selected {
+  border-color: #FF6A00;
+  background: rgba(255, 106, 0, 0.12);
+}
+
+.ob-option__meter { flex-shrink: 0; display: flex; align-items: flex-end; }
+
+.ob-option__text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.ob-option__label {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ob-text);
+  line-height: 1.3;
+}
+
+.ob-option__note {
+  font-size: 12px;
+  color: var(--ob-muted);
+  line-height: 1.4;
+}
+
+/* ====================================================================
+   GENRE PILLS — multi-select
+   ==================================================================== */
+.ob-options--multi {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.ob-genre {
+  padding: 12px 20px;
+  border-radius: 14px;
+  border: 1px solid var(--ob-border);
+  background: var(--ob-card-bg);
+  color: var(--ob-text);
+  font-family: var(--ob-display);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  transition: border-color 0.18s, background 0.18s, color 0.18s;
+}
+
+.ob-genre:hover { border-color: rgba(255, 106, 0, 0.45); }
+
+.ob-genre.is-selected {
+  border-color: var(--ob-orange);
+  background: var(--ob-orange);
+  color: var(--ob-black);
+}
+
+/* ====================================================================
+   BUTTONS
+   ==================================================================== */
+.ob-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-family: var(--ob-body);
+  font-weight: 600;
+  font-size: 15px;
+  border-radius: var(--ob-radius);
+  cursor: pointer;
+  transition: opacity 0.18s, transform 0.15s;
+  white-space: nowrap;
+  text-decoration: none;
+  border: none;
+}
+
+.ob-btn:hover  { opacity: 0.85; }
+.ob-btn:active { transform: scale(0.97); }
+
+.ob-btn:focus-visible {
+  outline: 2px solid var(--ob-orange);
+  outline-offset: 2px;
+}
+
+/* Primary: orange bg, black text */
+.ob-btn--primary {
+  background: var(--ob-orange);
+  color: var(--ob-black);
+  padding: 14px 28px;
+}
+
+/* Dark: black bg, cream text — used on orange (done) screen */
+.ob-btn--dark {
+  background: var(--ob-black);
+  color: var(--ob-cream);
+  padding: 14px 28px;
+}
+
+/* Text: ghost/skip style */
+.ob-btn--text {
+  background: none;
+  color: var(--ob-muted);
+  padding: 14px 4px;
+  font-weight: 500;
+  font-size: 14px;
+}
+.ob-btn--text:hover { color: var(--ob-text); opacity: 1; }
+
+/* Full-width variant */
+.ob-btn--full { width: 100%; }
+
+/* ====================================================================
+   DONE SCREEN
+   ==================================================================== */
+.ob-done {
+  padding: 48px 32px 40px;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 40px;
+  min-height: 100dvh;
+}
+
+.ob-done__inner {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.ob-done__eyebrow {
+  font-family: var(--ob-body);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ob-text);
+  opacity: 0.6;
+}
+
+.ob-done__orbit { line-height: 0; }
+
+.ob-done__heading {
+  display: flex;
+  flex-direction: column;
+  font-family: var(--ob-display);
+  font-size: clamp(2.6rem, 11vw, 4.2rem);
+  font-weight: 800;
+  line-height: 0.97;
+  letter-spacing: -0.02em;
+  color: var(--ob-text);
+}
+
+.ob-done__body {
+  font-size: 1rem;
+  line-height: 1.65;
+  color: var(--ob-text);
+  opacity: 0.65;
+}
+
+.ob-done__actions { display: flex; flex-direction: column; }
+
+/* ====================================================================
+   Reduced motion
+   ==================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  .ob-btn, .ob-option, .ob-genre, .ob-back { transition: none; }
+}

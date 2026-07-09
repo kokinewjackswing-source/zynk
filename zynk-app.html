@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Zynk</title>
+  <meta name="description" content="Zynk — your space, your pace, your dance." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <!-- Bricolage Grotesque (display) + Inter (body/UI) — per DESIGN.md -->
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/app.css" />
+</head>
+<body>
+  <div id="app-wrapper">
+    <!-- Screen container: home / library / progress / profile layer here -->
+    <div id="app-root"></div>
+    <!-- Bottom navigation — always visible -->
+    <nav id="app-nav" class="zk-nav" aria-label="Main navigation"></nav>
+  </div>
+
+  <!-- All copy from data.js → window.CONTENT.app -->
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
