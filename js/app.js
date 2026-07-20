@@ -19,14 +19,32 @@
   let detailHeaderEl = null;
   let detailScrollEl = null;
 
+  /* Player state */
+  let playerLesson       = null;
+  let playerCurrentStep  = 0;
+  let playerTimeLeft     = 0;
+  let playerIsPaused     = false;
+  let playerInterval     = null;
+
+  /* Player DOM refs — set once in buildPlayerShell */
+  let playerStageEl      = null;
+  let playerMoveEl       = null;
+  let playerTimerEl      = null;
+  let playerBtnEl        = null;
+  let playerStepsListEl  = null;
+  let playerLessonNameEl = null;
+
+  const STEP_THEMES = ['dark', 'orange', 'cream'];
+
   /* ---- Build screens ------------------------------------------------ */
   const homeScreen     = buildHome();
   const libScreen      = buildLibrary();
   const detailScreen   = buildDetailShell();   /* sets detailHeaderEl / detailScrollEl */
-  const progressScreen = buildStub('progress');
-  const profileScreen  = buildStub('profile');
+  const progressScreen = buildProgress();
+  const profileScreen  = buildProfile();
+  const playerScreen   = buildPlayerShell();   /* sets player* DOM refs */
 
-  [homeScreen, libScreen, detailScreen, progressScreen, profileScreen]
+  [homeScreen, libScreen, detailScreen, progressScreen, profileScreen, playerScreen]
     .forEach(s => root.appendChild(s));
 
   buildNav();
@@ -38,13 +56,13 @@
   function activate(id) {
     const screens = {
       home: homeScreen, library: libScreen, detail: detailScreen,
-      progress: progressScreen, profile: profileScreen,
+      progress: progressScreen, profile: profileScreen, player: playerScreen,
     };
     Object.entries(screens).forEach(([k, s]) =>
       s.classList.toggle('is-active', k === id));
 
     /* Highlight the nav tab that "owns" the current view */
-    const navId = id === 'detail' ? previousScreen : id;
+    const navId = (id === 'detail' || id === 'player') ? previousScreen : id;
     navEl.querySelectorAll('[data-screen]').forEach(btn =>
       btn.classList.toggle('is-active', btn.dataset.screen === navId));
   }
@@ -291,6 +309,7 @@
     const playBtn = el('button', 'zk-play-btn');
     playBtn.setAttribute('aria-label', `Play ${lesson.title}`);
     playBtn.innerHTML = playIconSVG();
+    playBtn.addEventListener('click', () => openPlayer(lesson));
     actions.appendChild(playBtn);
 
     const restartBtn = el('button', 'zk-icon-btn');
@@ -337,6 +356,434 @@
       });
       detailScrollEl.appendChild(focuses);
     }
+  }
+
+  /* ==================================================================
+     PROGRESS SCREEN
+     ================================================================== */
+  function buildProgress() {
+    const P      = C.progress;
+    const screen = el('div', 'zk-screen');
+
+    /* Scrollable body */
+    const scroll = el('div', 'zk-prog__scroll');
+
+    /* Heading */
+    const head = el('div', 'zk-prog-head');
+    const h1   = el('h2', 'zk-prog-heading');
+    h1.textContent = P.heading;
+    head.appendChild(h1);
+    scroll.appendChild(head);
+
+    /* Weekly stat cards */
+    const statSection = el('div', 'zk-stat-section');
+    const sLabel = el('p', 'zk-prog-section-label');
+    sLabel.textContent = P.weekly.sectionLabel;
+    statSection.appendChild(sLabel);
+    const grid = el('div', 'zk-stat-grid');
+    P.weekly.stats.forEach(stat => {
+      const card = el('div', 'zk-stat-card');
+      card.dataset.theme = stat.theme;
+      const value = el('div', 'zk-stat-card__value');
+      value.textContent = stat.value;
+      const unit  = el('div', 'zk-stat-card__unit');
+      unit.textContent = stat.unit;
+      const label = el('div', 'zk-stat-card__label');
+      label.textContent = stat.label;
+      card.appendChild(value);
+      card.appendChild(unit);
+      card.appendChild(label);
+      grid.appendChild(card);
+    });
+    statSection.appendChild(grid);
+    scroll.appendChild(statSection);
+
+    /* Recent sessions list with /01 /02 ... numbered labels */
+    const recentSection = el('div', 'zk-recent-section');
+    const rLabel = el('p', 'zk-prog-section-label');
+    rLabel.textContent = P.recentLabel;
+    recentSection.appendChild(rLabel);
+    P.recent.forEach((session, i) => {
+      const row = el('div', 'zk-recent-item');
+
+      const num = el('span', 'zk-recent-num');
+      num.textContent = `/${String(i + 1).padStart(2, '0')}`;
+
+      const info   = el('div', 'zk-recent-info');
+      const lesson = el('div', 'zk-recent-lesson');
+      lesson.textContent = session.lesson;
+      const meta   = el('div', 'zk-recent-meta');
+      meta.textContent  = `${session.genre} · ${session.date}`;
+      info.appendChild(lesson);
+      info.appendChild(meta);
+
+      const dur = el('span', 'zk-recent-dur');
+      dur.textContent = session.duration;
+
+      row.appendChild(num);
+      row.appendChild(info);
+      row.appendChild(dur);
+      recentSection.appendChild(row);
+    });
+    scroll.appendChild(recentSection);
+
+    /* Genre balance bar chart */
+    const genreSection = el('div', 'zk-genre-section');
+    const gLabel = el('p', 'zk-prog-section-label');
+    gLabel.textContent = P.genreLabel;
+    genreSection.appendChild(gLabel);
+    P.genres.forEach(g => {
+      const row = el('div', 'zk-genre-row');
+
+      const rowHead = el('div', 'zk-genre-row__head');
+      const name    = el('span', 'zk-genre-row__name');
+      name.textContent = g.label;
+      const pct     = el('span', 'zk-genre-row__pct');
+      pct.textContent = `${g.pct}%`;
+      rowHead.appendChild(name);
+      rowHead.appendChild(pct);
+
+      const track = el('div', 'zk-genre-bar-track');
+      const fill  = el('div', 'zk-genre-bar-fill');
+      fill.style.width = `${g.pct}%`;
+      track.appendChild(fill);
+
+      row.appendChild(rowHead);
+      row.appendChild(track);
+      genreSection.appendChild(row);
+    });
+    scroll.appendChild(genreSection);
+
+    screen.appendChild(scroll);
+    return screen;
+  }
+
+  /* ==================================================================
+     PROFILE SCREEN
+     ================================================================== */
+  function buildProfile() {
+    const P      = C.profile;
+    const screen = el('div', 'zk-screen');
+
+    const scroll = el('div', 'zk-prof__scroll');
+
+    /* Heading */
+    const head = el('div', 'zk-prof-head');
+    const h1   = el('h2', 'zk-prof-heading');
+    h1.textContent = P.heading;
+    head.appendChild(h1);
+    scroll.appendChild(head);
+
+    /* Avatar + user info */
+    const userRow = el('div', 'zk-prof-user');
+
+    const avatar = el('div', 'zk-prof-avatar');
+    avatar.textContent = P.user.initials;
+    userRow.appendChild(avatar);
+
+    const info   = el('div', 'zk-prof-user__info');
+    const name   = el('div', 'zk-prof-name');
+    name.textContent = P.user.name;
+    const since  = el('div', 'zk-prof-since');
+    since.textContent = P.user.since;
+    info.appendChild(name);
+    info.appendChild(since);
+    userRow.appendChild(info);
+    scroll.appendChild(userRow);
+
+    /* ---- YOUR PRACTICE section ---- */
+    const practiceSection = el('div', 'zk-prof-section');
+    const pLabel = el('p', 'zk-prof-section__label');
+    pLabel.textContent = P.practice.sectionLabel;
+    practiceSection.appendChild(pLabel);
+
+    /* Row 1: Style (genres) */
+    const genreRow = el('div', 'zk-prof-row');
+    const genreLeft = el('div', 'zk-prof-row__left');
+    const genreLabel = el('span', 'zk-prof-row__label');
+    genreLabel.textContent = P.practice.genres.label;
+    const genreHint = el('span', 'zk-prof-row__hint');
+    genreHint.textContent = P.practice.genres.hint;
+    genreLeft.appendChild(genreLabel);
+    genreLeft.appendChild(genreHint);
+    const genreVal = el('span', 'zk-prof-row__value');
+    genreVal.textContent = P.practice.genres.value;
+    genreRow.appendChild(genreLeft);
+    genreRow.appendChild(genreVal);
+    practiceSection.appendChild(genreRow);
+
+    /* Row 2: Weekly goal (pace stepper) */
+    const paceData = P.practice.pace;
+    let paceValue  = paceData.default;
+
+    const paceRow = el('div', 'zk-prof-row');
+    const paceLabel = el('span', 'zk-prof-row__label');
+    paceLabel.textContent = paceData.label;
+    paceRow.appendChild(paceLabel);
+
+    const stepper = el('div', 'zk-stepper');
+    const decBtn  = el('button', 'zk-stepper__btn');
+    decBtn.textContent = '−';
+    decBtn.setAttribute('aria-label', 'Decrease goal');
+    const valEl   = el('span', 'zk-stepper__value');
+    valEl.textContent = `${paceValue}`;
+    const incBtn  = el('button', 'zk-stepper__btn');
+    incBtn.textContent = '+';
+    incBtn.setAttribute('aria-label', 'Increase goal');
+
+    decBtn.addEventListener('click', () => {
+      if (paceValue > paceData.min) {
+        paceValue -= 1;
+        valEl.textContent = `${paceValue}`;
+      }
+    });
+    incBtn.addEventListener('click', () => {
+      if (paceValue < paceData.max) {
+        paceValue += 1;
+        valEl.textContent = `${paceValue}`;
+      }
+    });
+    stepper.appendChild(decBtn);
+    stepper.appendChild(valEl);
+    stepper.appendChild(incBtn);
+    paceRow.appendChild(stepper);
+    practiceSection.appendChild(paceRow);
+
+    /* Row 3: Hide comparisons (toggle + description) */
+    const nc         = P.practice.noCompare;
+    let   compareOn  = nc.defaultOn;
+
+    const toggleRow  = el('div', 'zk-prof-row zk-prof-row--stack');
+    const toggleHead = el('div', 'zk-prof-row--toggle-head');
+    const toggleLabel = el('span', 'zk-prof-row__label');
+    toggleLabel.textContent = nc.label;
+    const toggle     = el('button', 'zk-toggle');
+    toggle.setAttribute('role', 'switch');
+    toggle.setAttribute('aria-checked', String(compareOn));
+    toggle.setAttribute('aria-label', nc.label);
+    const thumb      = el('span', 'zk-toggle__thumb');
+    toggle.appendChild(thumb);
+    toggle.addEventListener('click', () => {
+      compareOn = !compareOn;
+      toggle.setAttribute('aria-checked', String(compareOn));
+    });
+    toggleHead.appendChild(toggleLabel);
+    toggleHead.appendChild(toggle);
+    const toggleDesc = el('p', 'zk-prof-row__desc');
+    toggleDesc.textContent = nc.description;
+    toggleRow.appendChild(toggleHead);
+    toggleRow.appendChild(toggleDesc);
+    practiceSection.appendChild(toggleRow);
+
+    scroll.appendChild(practiceSection);
+
+    /* ---- ABOUT section ---- */
+    const aboutSection = el('div', 'zk-prof-section zk-prof-section--about');
+    const aLabel = el('p', 'zk-prof-section__label');
+    aLabel.textContent = P.about.sectionLabel;
+    aboutSection.appendChild(aLabel);
+
+    /* Version row */
+    const versionRow = el('div', 'zk-prof-row');
+    const vLabel = el('span', 'zk-prof-row__label');
+    vLabel.textContent = P.about.version.label;
+    const vVal   = el('span', 'zk-prof-row__value');
+    vVal.textContent = P.about.version.value;
+    versionRow.appendChild(vLabel);
+    versionRow.appendChild(vVal);
+    aboutSection.appendChild(versionRow);
+
+    /* Reset onboarding row */
+    const resetRow = el('button', 'zk-prof-row zk-prof-row--link');
+    const resetLabel = el('span', 'zk-prof-row__label');
+    resetLabel.textContent = P.about.reset.label;
+    resetRow.appendChild(resetLabel);
+    resetRow.addEventListener('click', () => {
+      window.location.href = P.about.reset.href;
+    });
+    aboutSection.appendChild(resetRow);
+
+    scroll.appendChild(aboutSection);
+    screen.appendChild(scroll);
+    return screen;
+  }
+
+  /* ==================================================================
+     LESSON PLAYER SCREEN
+     ================================================================== */
+  function buildPlayerShell() {
+    const screen = el('div', 'zk-screen zk-player');
+
+    /* Header */
+    const header = el('div', 'zk-player-header');
+    const closeBtn = el('button', 'zk-player-close');
+    closeBtn.textContent = C.player.closeLabel;
+    closeBtn.addEventListener('click', closePlayer);
+    playerLessonNameEl = el('span', 'zk-player-lesson-name');
+    const spacer = el('span', 'zk-player-header__spacer');
+    header.appendChild(closeBtn);
+    header.appendChild(playerLessonNameEl);
+    header.appendChild(spacer);
+    screen.appendChild(header);
+
+    /* Stage — move name + timer, color-switchable */
+    playerStageEl = el('div', 'zk-player-stage');
+    playerStageEl.dataset.theme = 'dark';
+    playerMoveEl  = el('div', 'zk-player-stage__move');
+    playerTimerEl = el('div', 'zk-player-stage__timer');
+    playerStageEl.appendChild(playerMoveEl);
+    playerStageEl.appendChild(playerTimerEl);
+    screen.appendChild(playerStageEl);
+
+    /* Controls */
+    const controls = el('div', 'zk-player-controls');
+
+    const prevBtn = el('button', 'zk-ctrl-btn');
+    prevBtn.setAttribute('aria-label', C.player.ui.prev);
+    prevBtn.innerHTML = prevStepSVG();
+    prevBtn.addEventListener('click', () => goToStep(playerCurrentStep - 1));
+
+    playerBtnEl = el('button', 'zk-ctrl-btn zk-ctrl-btn--primary');
+    playerBtnEl.setAttribute('aria-label', C.player.ui.pause);
+    playerBtnEl.innerHTML = pauseIconSVG();
+    playerBtnEl.addEventListener('click', togglePlayPause);
+
+    const nextBtn = el('button', 'zk-ctrl-btn');
+    nextBtn.setAttribute('aria-label', C.player.ui.next);
+    nextBtn.innerHTML = nextStepSVG();
+    nextBtn.addEventListener('click', () => goToStep(playerCurrentStep + 1));
+
+    controls.appendChild(prevBtn);
+    controls.appendChild(playerBtnEl);
+    controls.appendChild(nextBtn);
+    screen.appendChild(controls);
+
+    /* Steps list */
+    const wrap = el('div', 'zk-player-steps-wrap');
+    playerStepsListEl = el('div', 'zk-player-steps');
+    wrap.appendChild(playerStepsListEl);
+    screen.appendChild(wrap);
+
+    /* Sub-copy */
+    const sub = el('p', 'zk-player-subcopy');
+    sub.textContent = C.player.subCopy;
+    screen.appendChild(sub);
+
+    return screen;
+  }
+
+  function openPlayer(lesson) {
+    stopPlayerTimer();
+    playerLesson      = lesson;
+    playerCurrentStep = 0;
+    playerIsPaused    = false;
+
+    playerLessonNameEl.textContent = lesson.title;
+    buildStepsList(lesson);
+
+    navEl.style.display = 'none';
+    activate('player');
+    startStep(0);
+  }
+
+  function closePlayer() {
+    stopPlayerTimer();
+    navEl.style.display = '';
+    activate('detail');
+  }
+
+  function buildStepsList(lesson) {
+    playerStepsListEl.innerHTML = '';
+    (lesson.focuses || []).forEach((text, i) => {
+      const item = el('div', 'zk-player-step');
+      const num  = el('span', 'zk-player-step__num');
+      num.textContent = `/${String(i + 1).padStart(2, '0')}`;
+      const body = el('span', 'zk-player-step__text');
+      body.textContent = text;
+      item.appendChild(num);
+      item.appendChild(body);
+      playerStepsListEl.appendChild(item);
+    });
+  }
+
+  function startStep(idx) {
+    stopPlayerTimer();
+    const focuses = (playerLesson && playerLesson.focuses) || [];
+    if (idx >= focuses.length) { finishPlayer(); return; }
+    if (idx < 0) idx = 0;
+
+    playerCurrentStep = idx;
+    playerTimeLeft    = C.player.demoDuration;
+    playerIsPaused    = false;
+
+    playerStageEl.dataset.theme = STEP_THEMES[idx % STEP_THEMES.length];
+    playerMoveEl.textContent    = formatMoveName(focuses[idx]);
+    playerTimerEl.textContent   = formatTime(playerTimeLeft);
+
+    updateStepsList();
+    updatePlayPauseBtn();
+
+    playerInterval = setInterval(tickPlayer, 1000);
+  }
+
+  function tickPlayer() {
+    if (playerIsPaused) return;
+    playerTimeLeft -= 1;
+    playerTimerEl.textContent = formatTime(playerTimeLeft);
+    if (playerTimeLeft <= 0) goToStep(playerCurrentStep + 1);
+  }
+
+  function stopPlayerTimer() {
+    clearInterval(playerInterval);
+    playerInterval = null;
+  }
+
+  function goToStep(idx) { startStep(idx); }
+
+  function togglePlayPause() {
+    playerIsPaused = !playerIsPaused;
+    updatePlayPauseBtn();
+  }
+
+  function updatePlayPauseBtn() {
+    playerBtnEl.innerHTML = playerIsPaused ? playIconForPlayerSVG() : pauseIconSVG();
+    playerBtnEl.setAttribute('aria-label',
+      playerIsPaused ? C.player.ui.resume : C.player.ui.pause);
+  }
+
+  function updateStepsList() {
+    const items = playerStepsListEl.querySelectorAll('.zk-player-step');
+    items.forEach((item, i) => {
+      item.classList.remove('is-done', 'is-current', 'is-upcoming');
+      if (i < playerCurrentStep)       item.classList.add('is-done');
+      else if (i === playerCurrentStep) item.classList.add('is-current');
+      else                              item.classList.add('is-upcoming');
+    });
+  }
+
+  function finishPlayer() {
+    stopPlayerTimer();
+    playerCurrentStep = (playerLesson && playerLesson.focuses) ? playerLesson.focuses.length : 0;
+    playerStageEl.dataset.theme  = 'orange';
+    playerMoveEl.textContent     = 'DONE.';
+    playerTimerEl.textContent    = '';
+    updateStepsList();
+    playerBtnEl.innerHTML = playIconForPlayerSVG();
+    playerBtnEl.setAttribute('aria-label', C.player.ui.resume);
+  }
+
+  function formatMoveName(text) {
+    const words = text.split(/\s+/);
+    const clean = w => w.replace(/[^A-Za-z0-9&/'.-]/g, '').toUpperCase();
+    const w1 = clean(words[0] || '');
+    const w2 = clean(words[1] || '');
+    if (!w1) return 'MOVE.';
+    return w2 ? `${w1} /\n${w2}.` : `${w1}.`;
+  }
+
+  function formatTime(s) {
+    const m = Math.floor(s / 60);
+    return `${m}:${String(s % 60).padStart(2, '0')}`;
   }
 
   /* ==================================================================
@@ -465,6 +912,41 @@
       <path d="M12 13 L12 6.5 A6.5 6.5 0 0 1 17.6 16.2 Z" fill="#FF6A00"/>
       <line x1="4.5"  y1="4"   x2="6.3"  y2="5.7" stroke="#F4EFE6" stroke-width="1.4" stroke-linecap="round"/>
       <line x1="19.5" y1="4"   x2="17.7" y2="5.7" stroke="#F4EFE6" stroke-width="1.4" stroke-linecap="round"/>
+    </svg>`;
+  }
+
+  /* Pause icon — sits on orange button → bars are black (per DESIGN.md) */
+  function pauseIconSVG() {
+    return `<svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden="true">
+      <rect x="7" y="6" width="5" height="16" rx="2" fill="#141414"/>
+      <rect x="16" y="6" width="5" height="16" rx="2" fill="#141414"/>
+    </svg>`;
+  }
+
+  /* Play icon for inside the player (orange button → black triangle) */
+  function playIconForPlayerSVG() {
+    return `<svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden="true">
+      <polygon points="10,6 24,14 10,22" fill="#141414"/>
+    </svg>`;
+  }
+
+  /* Prev step — skip-back: bar + chevron left, orange accent dot at tip */
+  function prevStepSVG() {
+    return `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <line x1="5" y1="5" x2="5" y2="19" stroke="#F4EFE6" stroke-width="2" stroke-linecap="round"/>
+      <polyline points="20,5 11,12 20,19" stroke="#F4EFE6" stroke-width="1.8"
+        stroke-linecap="round" stroke-linejoin="round"/>
+      <circle cx="11" cy="12" r="2.5" fill="#FF6A00"/>
+    </svg>`;
+  }
+
+  /* Next step — skip-forward: chevron right + bar, orange accent dot at tip */
+  function nextStepSVG() {
+    return `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <line x1="19" y1="5" x2="19" y2="19" stroke="#F4EFE6" stroke-width="2" stroke-linecap="round"/>
+      <polyline points="4,5 13,12 4,19" stroke="#F4EFE6" stroke-width="1.8"
+        stroke-linecap="round" stroke-linejoin="round"/>
+      <circle cx="13" cy="12" r="2.5" fill="#FF6A00"/>
     </svg>`;
   }
 

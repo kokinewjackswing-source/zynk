@@ -97,17 +97,13 @@ window.CONTENT = {
       gallery: ["images/project-zynk-1.svg", "images/project-zynk-2.svg"],
       caseStudy: {
         problem:
-          "Describe the core problem Zynk set out to solve and who it was for. " +
-          "What was painful, slow, or confusing before this project existed?",
+          "Most online dance apps are built around comparison — leaderboards, streaks visible to others, progress percentages that implicitly measure you against a standard. For Yui, a 20-year-old practicing alone in a shared apartment, that pressure is the exact reason she hasn't started. She doesn't lack motivation; she lacks a space where trying feels safe. The deeper problem is structural: most platforms film a studio class and upload it, never adapting the format for someone practicing solo, in a small room, with no one watching. The result is a market full of content that was never designed for the person who needs it most.",
         research:
-          "Summarize the research: interviews, competitive analysis, data. " +
-          "What did you learn, and which insight reframed the problem?",
+          "Competitive analysis of STEEZY Studio, Just Dance Now, GoNoodle, and Toca Dance revealed a consistent pattern: apps either gamify dance into casual entertainment (low ceiling, high comparison) or replicate the studio format online (high barrier, built for the already-confident). Neither serves a self-motivated beginner with anxiety around being evaluated. Persona research surfaced two distinct fear moments for users like Yui — before starting ('people on social media are so good, I'm not ready') and during practice ('I'm still not as good as them'). This reframed the design problem: the issue wasn't missing features, it was that every touchpoint in existing apps reminded users they were being measured.",
         designDecisions:
-          "Walk through the key design decisions and trade-offs. Why this " +
-          "layout, this flow, this pattern? Reference the gallery images above.",
+          "Three decisions shaped the core experience. First, comparison was removed at the system level — no leaderboards, no public progress, no social feeds — not as a toggle, but as a structural commitment. Second, the onboarding was redesigned as a single three-question flow that reads level and anxiety separately: combining them into one question would have missed users who are experienced but still anxious in front of others. Third, lesson access was decoupled from completion — no locked content, no prerequisite gates. Difficulty is shown as a three-bar meter so users can make informed choices without feeling blocked. The visual language reinforces the same values: poster-scale typography over photography (no comparison to 'real dancers'), flat color over gradients, and copy that consistently frames progress as personal ('Your pace. Your dance.') rather than relative.",
         outcome:
-          "Share the result — metrics, qualitative feedback, what shipped, and " +
-          "what you'd do next. End on the impact.",
+          "The most significant outcome of this project was a strategic pivot mid-process. An initial v1 concept targeted children aged 4–12 with a parent dashboard and curriculum-aligned content. Persona research revealed that the anxiety around comparison — the core problem worth solving — was far more acute in self-motivated young adults practicing alone than in children learning in a structured environment. That insight drove a full redesign: new persona (Yui, 20), new value proposition (zero comparison), and a new product architecture built around autonomy rather than parental oversight. The pivot is documented in Zynk_Strategy_v2.md. The final deliverable is a navigable six-screen prototype built on a coded design system (DESIGN.md) that a developer can implement directly. If taken to usability testing, the primary metric would be drop-off rate at the moment before a first-time user presses play — the exact point where comparison anxiety is highest and where existing apps lose users like Yui.",
       },
     },
 
@@ -308,10 +304,104 @@ window.CONTENT = {
       ],
     },
 
-    /* ---- Stub screens (Progress / Profile) -------------------- */
-    stubs: {
-      progress: { heading: "PROGRESS",  body: "Your journey so far — coming soon." },
-      profile:  { heading: "PROFILE",   body: "Your space, your settings — coming soon." },
+    /* ---- Progress screen -------------------------------------- */
+    progress: {
+
+      heading: "PROGRESS.",
+
+      /* Three weekly-summary stat cards — color switchback dark/orange/cream */
+      weekly: {
+        sectionLabel: "This week",
+        stats: [
+          { value: "4",  unit: "days", label: "Practiced",  theme: "dark"   },
+          { value: "58", unit: "min",  label: "Total time", theme: "orange" },
+          { value: "6",  unit: "days", label: "Streak",     theme: "cream"  },
+        ],
+      },
+
+      /* Recent sessions — shown with /01 /02 ... numbered labels */
+      recentLabel: "Recent sessions",
+      recent: [
+        { date: "Today",     lesson: "Groove Foundation", genre: "HIP HOP", duration: "12 min" },
+        { date: "Yesterday", lesson: "R&B Sway",          genre: "R&B",     duration: "15 min" },
+        { date: "Jun 28",    lesson: "Locking Claps",     genre: "LOCKING", duration: "16 min" },
+        { date: "Jun 26",    lesson: "House Step 101",    genre: "HOUSE",   duration: "14 min" },
+        { date: "Jun 25",    lesson: "Bounce & Flow",     genre: "HIP HOP", duration: "18 min" },
+      ],
+
+      /* Genre balance — horizontal bar chart, pct = 0–100 */
+      genreLabel: "By style",
+      genres: [
+        { label: "HIP HOP", pct: 55 },
+        { label: "R&B",     pct: 20 },
+        { label: "LOCKING", pct: 15 },
+        { label: "HOUSE",   pct: 10 },
+      ],
+
+    }, /* end progress */
+
+    /* ---- Profile screen --------------------------------------- */
+    profile: {
+
+      heading: "PROFILE.",
+
+      user: {
+        initials: "KI",
+        name:     "Koki",
+        since:    "Practicing since June 2025",
+      },
+
+      practice: {
+        sectionLabel: "YOUR PRACTICE",
+
+        genres: {
+          label: "Style",
+          value: "HIP HOP / R&B",
+          hint:  "Tap to update",
+        },
+
+        pace: {
+          label:   "Weekly goal",
+          default: 3,
+          min:     1,
+          max:     7,
+          unit:    "sessions",
+        },
+
+        noCompare: {
+          label:       "Hide comparisons",
+          description: "You'll never see how others are doing. Just you.",
+          defaultOn:   true,
+        },
+      },
+
+      about: {
+        sectionLabel: "ABOUT",
+
+        version: {
+          label: "Version",
+          value: "1.0.0",
+        },
+
+        reset: {
+          label: "Reset onboarding",
+          href:  "zynk-onboarding.html",
+        },
+      },
+
+    }, /* end profile */
+
+    /* ---- Player screen ---------------------------------------- */
+    player: {
+      closeLabel: "× End",
+      subCopy:    "Your pace. Take a break anytime.",
+      ui: {
+        pause:  "Pause",
+        resume: "Resume",
+        prev:   "Previous step",
+        next:   "Next step",
+      },
+      demoDuration: 40, /* seconds per step — short for demo */
     },
 
   }, /* end app */
