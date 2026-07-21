@@ -101,7 +101,7 @@
     const header = el('header', 'zk-header');
     const profileLabel = C.nav.find(n => n.id === 'profile').label;
     header.innerHTML = `
-      <span class="zk-brand">${esc(C.brand)}</span>
+      <span class="zk-logo"><span class="zk-logo__ring" aria-hidden="true"></span><span class="zk-logo__text">${esc(C.brand)}</span></span>
       <button class="zk-header__icon" aria-label="${esc(profileLabel)}">${profileIconSVG()}</button>`;
     header.querySelector('button').addEventListener('click', () => {
       previousScreen = 'home';
@@ -548,32 +548,6 @@
     stepper.appendChild(incBtn);
     paceRow.appendChild(stepper);
     practiceSection.appendChild(paceRow);
-
-    /* Row 3: Hide comparisons (toggle + description) */
-    const nc         = P.practice.noCompare;
-    let   compareOn  = nc.defaultOn;
-
-    const toggleRow  = el('div', 'zk-prof-row zk-prof-row--stack');
-    const toggleHead = el('div', 'zk-prof-row--toggle-head');
-    const toggleLabel = el('span', 'zk-prof-row__label');
-    toggleLabel.textContent = nc.label;
-    const toggle     = el('button', 'zk-toggle');
-    toggle.setAttribute('role', 'switch');
-    toggle.setAttribute('aria-checked', String(compareOn));
-    toggle.setAttribute('aria-label', nc.label);
-    const thumb      = el('span', 'zk-toggle__thumb');
-    toggle.appendChild(thumb);
-    toggle.addEventListener('click', () => {
-      compareOn = !compareOn;
-      toggle.setAttribute('aria-checked', String(compareOn));
-    });
-    toggleHead.appendChild(toggleLabel);
-    toggleHead.appendChild(toggle);
-    const toggleDesc = el('p', 'zk-prof-row__desc');
-    toggleDesc.textContent = nc.description;
-    toggleRow.appendChild(toggleHead);
-    toggleRow.appendChild(toggleDesc);
-    practiceSection.appendChild(toggleRow);
 
     scroll.appendChild(practiceSection);
 

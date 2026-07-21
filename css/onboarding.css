@@ -97,20 +97,18 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   min-height: 100dvh;
 }
 
-/* Oversized × mark bleeds off top-right edge — poster energy */
+/* Orbit mark — placed in normal flow, in the gap between the body
+   copy and the CTA buttons, right-aligned and bleeding slightly off
+   the right edge. This keeps it clear of the heading regardless of
+   how many lines the (variable-length) heading wraps to. */
 .ob-welcome__deco {
-  position: absolute;
-  top: -24px;
-  right: -12px;
-  font-family: var(--ob-display);
-  font-size: clamp(9rem, 38vw, 14rem);
-  font-weight: 800;
-  line-height: 1;
-  color: var(--ob-orange);
+  align-self: flex-end;
+  width: clamp(4.5rem, 20vw, 6.5rem);
+  margin-right: -12px;
   user-select: none;
   pointer-events: none;
-  letter-spacing: -0.04em;
 }
+.ob-welcome__deco svg { display: block; width: 100%; height: auto; }
 
 .ob-welcome__inner {
   display: flex;
@@ -118,14 +116,35 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   gap: 24px;
 }
 
-.ob-welcome__eyebrow {
-  font-family: var(--ob-body);
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--ob-orange);
+.ob-welcome__eyebrow { line-height: 1; }
+
+/* Logo — Orbitron wordmark inside a tilted orbit ring ---------------- */
+.zk-logo {
+  --zk-logo-color: var(--ob-orange);
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 7px 16px;
 }
+.zk-logo__ring {
+  position: absolute;
+  inset: 0;
+  border: 2.5px solid var(--zk-logo-color);
+  border-radius: 50%;
+  transform: rotate(-8deg);
+  pointer-events: none;
+}
+.zk-logo__text {
+  position: relative;
+  font-family: "Orbitron", var(--ob-display);
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 4px;
+  color: var(--zk-logo-color);
+  white-space: nowrap;
+}
+.zk-logo--cream { --zk-logo-color: var(--ob-cream); }
 
 /* Heading lines in Bricolage Grotesque — each line in its own span */
 .ob-welcome__heading {

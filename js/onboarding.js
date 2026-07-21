@@ -43,16 +43,20 @@
     div.className    = 'ob-screen ob-welcome';
     div.dataset.theme = 'dark';
 
-    /* Oversized × — poster energy, bleeds off top-right edge */
+    /* Orbit mark — sits in the gap between body copy and the CTA
+       buttons so it never collides with the (variable-length,
+       variable-line-count) heading above it. Same ellipse + dot style
+       as the done screen's orbitSVG(), rendered in orange on this
+       screen's dark bg. */
     const deco = document.createElement('div');
     deco.className   = 'ob-welcome__deco';
     deco.setAttribute('aria-hidden', 'true');
-    deco.textContent = '×';
+    deco.innerHTML   = orbitSVG('#FF6A00');
 
     const inner = document.createElement('div');
     inner.className = 'ob-welcome__inner';
     inner.innerHTML = `
-      <div class="ob-welcome__eyebrow">${esc(C.welcome.eyebrow)}</div>
+      <div class="ob-welcome__eyebrow"><span class="zk-logo"><span class="zk-logo__ring" aria-hidden="true"></span><span class="zk-logo__text">${esc(C.welcome.eyebrow)}</span></span></div>
       <h1 class="ob-welcome__heading">
         ${C.welcome.heading.map(line => `<span>${esc(line)}</span>`).join('')}
       </h1>
@@ -69,8 +73,8 @@
     /* "スキップして入る" jumps directly to the done screen */
     actions.querySelector('.js-skip-all').addEventListener('click', () => activate(screens.length - 1));
 
-    div.appendChild(deco);
     div.appendChild(inner);
+    div.appendChild(deco);
     div.appendChild(actions);
     return div;
   }
@@ -309,13 +313,14 @@
   }
 
   /* Orbit mark: thin tilted ellipse outline + filled dot.
-     On orange bg, dot is black (no orange needed — the whole bg is the accent). */
-  function orbitSVG() {
+     On orange bg (done screen), dot is black — the whole bg is the accent.
+     On dark bg (welcome screen deco), pass '#FF6A00' to render in orange. */
+  function orbitSVG(color = '#141414') {
     return `<svg width="52" height="52" viewBox="0 0 52 52" fill="none" aria-hidden="true">
       <ellipse cx="26" cy="26" rx="20" ry="9"
-               fill="none" stroke="#141414" stroke-width="1.6"
+               fill="none" stroke="${color}" stroke-width="1.6"
                transform="rotate(-32 26 26)"/>
-      <circle cx="26" cy="26" r="5" fill="#141414"/>
+      <circle cx="26" cy="26" r="5" fill="${color}"/>
     </svg>`;
   }
 

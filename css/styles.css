@@ -261,6 +261,30 @@ button { font-family: inherit; cursor: pointer; }
 .page-title { font-size: clamp(36px, 7vw, 76px); font-weight: 700; line-height: 1; letter-spacing: -0.03em; }
 .page-category { color: var(--accent); font-weight: 600; margin-bottom: 16px; }
 
+/* Zynk-only wordmark: Orbitron + tilted orbit ring (js/inner.js applies
+   this only when project.slug === "zynk"; every other project keeps the
+   plain .page-title above). Brand orange, independent of --accent. */
+.page-title--zynk {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  padding: 0.2em 0.5em;
+}
+.page-title--zynk .zk-logo-ring {
+  position: absolute;
+  inset: 0;
+  border: 2.5px solid #FF6A00;
+  border-radius: 50%;
+  transform: rotate(-8deg);
+  pointer-events: none;
+}
+.page-title--zynk .zk-logo-text {
+  position: relative;
+  font-family: "Orbitron", var(--font);
+  letter-spacing: 4px;
+  color: #FF6A00;
+}
+
 .cover-figure { margin-block: clamp(28px, 5vw, 56px); }
 .cover-figure img { width: 100%; border-radius: var(--radius); border: 1px solid var(--border); aspect-ratio: 16/8; object-fit: cover; }
 

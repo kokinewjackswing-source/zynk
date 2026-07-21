@@ -73,11 +73,20 @@
          </div>`
       : "";
 
+    /* Zynk gets its Orbitron + orbit-ring wordmark; every other project
+       keeps the plain page-title heading. */
+    const titleHTML = p.slug === "zynk"
+      ? `<h1 class="page-title page-title--zynk">
+           <span class="zk-logo-ring" aria-hidden="true"></span>
+           <span class="zk-logo-text">${esc(p.title)}</span>
+         </h1>`
+      : `<h1 class="page-title">${esc(p.title)}</h1>`;
+
     root.innerHTML = `
       <section class="page-hero container">
         <a class="back-link" href="index.html#work">← Back to work</a>
         <div class="page-category">${esc(p.category)}</div>
-        <h1 class="page-title">${esc(p.title)}</h1>
+        ${titleHTML}
         <p class="section-lead" style="margin-top:18px">${esc(p.summary)}</p>
         <div class="page-meta">${meta}</div>
         ${protoBtn}

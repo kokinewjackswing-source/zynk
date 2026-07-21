@@ -86,15 +86,15 @@ window.CONTENT = {
       category: "Product Design",
       year: "2025",
       role: "Lead UX/UI Designer",
-      cover: "images/project-zynk.svg",
+      cover: "images/project-zynk.png",
       summary:
-        "A placeholder case study. Replace with the real story of how Zynk " +
-        "came together — the goal, your role, and the impact.",
+        "A UX case study exploring how beginners build the confidence to " +
+        "walk into their first dance class.",
       // Link to a live prototype or demo page (optional — omit to hide the button)
       prototypeLink: "zynk-onboarding.html",
       prototypeCta:  "Try the onboarding prototype →",
       // Optional extra images shown in the case study body:
-      gallery: ["images/project-zynk-1.svg", "images/project-zynk-2.svg"],
+      gallery: ["images/project-zynk-1.png", "images/project-zynk-2.png"],
       caseStudy: {
         problem:
           "Zynk started with an observation from browsing dance app reviews and forums: a recurring pattern where users with some dance background download an app out of curiosity, try a handful of lessons, and quietly stop opening it. The content rarely gives them a reason to stay.\n\nBut chasing that churn wasn't the more interesting opportunity. It was an audience these apps largely overlook: complete beginners who are curious about dance but have never set foot in a studio. For someone like Yui, a 20-year-old university student who's always wanted to try dance, walking into her first class with zero experience feels intimidating. Signing up for a school feels like a bigger commitment than it should be — financially, socially, and simply in not knowing what she's getting into.\n\nWhat Yui needs isn't a substitute for a dance school. It's a low-stakes place to build just enough foundation and confidence to walk into that first class without dreading it.",
@@ -212,7 +212,7 @@ window.CONTENT = {
   app: {
 
     pageTitle: "Zynk",
-    brand:     "/ ZYNK",
+    brand:     "ZYNK",
 
     /* Bottom navigation tabs */
     nav: [
@@ -367,12 +367,6 @@ window.CONTENT = {
           max:     7,
           unit:    "sessions",
         },
-
-        noCompare: {
-          label:       "Hide comparisons",
-          description: "You'll never see how others are doing. Just you.",
-          defaultOn:   true,
-        },
       },
 
       about: {
@@ -424,9 +418,9 @@ window.CONTENT = {
 
     /* ---- Welcome screen (dark panel) -------------------------- */
     welcome: {
-      eyebrow:  "/ ZYNK",
-      heading:  ["No comparisons.", "Just your rhythm."],
-      body:     "No scores, no rankings. Just music you love, at a pace that's yours.",
+      eyebrow:  "ZYNK",
+      heading:  ["Start where you are."],
+      body:     "No pressure, no comparisons. Just you, building confidence at your own pace — before you ever step into a studio.",
       cta:      "Let's go",
       ctaSkip:  "Skip and jump in",
     },
@@ -455,13 +449,13 @@ window.CONTENT = {
       {
         num:   "/02",
         theme: "light",
-        question: ["Does being compared", "to others bother you?"],
-        sub:      "Optional — honest answers help us find your pace.",
+        question: ["What's holding you back", "from a class?"],
+        sub:      "Optional — this helps us meet you where you are.",
         type:     "single",
         options: [
-          { id: "low",    label: "Not really my thing" },
-          { id: "medium", label: "It creeps in sometimes" },
-          { id: "high",   label: "Yeah, honestly — it does" },
+          { id: "low",    label: "Nothing, just haven't gotten around to it" },
+          { id: "medium", label: "A little nervous about walking in blind" },
+          { id: "high",   label: "Honestly, scared I'd be the worst one there" },
         ],
         skip: "Skip",
         next: "Next",

@@ -115,13 +115,33 @@ a { color: inherit; text-decoration: none; }
   background: var(--zk-black);
 }
 
-.zk-brand {
-  font-family: var(--zk-display);
-  font-size: 14px;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  color: var(--zk-orange);
+/* Logo — Orbitron wordmark inside a tilted orbit ring ---------------- */
+.zk-logo {
+  --zk-logo-color: var(--zk-orange);
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 7px 16px;
 }
+.zk-logo__ring {
+  position: absolute;
+  inset: 0;
+  border: 2.5px solid var(--zk-logo-color);
+  border-radius: 50%;
+  transform: rotate(-8deg);
+  pointer-events: none;
+}
+.zk-logo__text {
+  position: relative;
+  font-family: "Orbitron", var(--zk-display);
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 4px;
+  color: var(--zk-logo-color);
+  white-space: nowrap;
+}
+.zk-logo--cream { --zk-logo-color: var(--zk-cream); }
 
 .zk-header__icon {
   color: var(--zk-cream);
